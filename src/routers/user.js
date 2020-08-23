@@ -3,6 +3,9 @@ const router = new express.Router();
 const auth = require("../middleware/auth");
 const multer = require("multer");
 
+const Email = require("../email");
+const email = new Email();
+
 const User = require("../models/user");
 const sharp = require("sharp");
 
@@ -10,6 +13,7 @@ router.post("/user", async (req, res) => {
     try {
         const user = User(req.body);
         const result = await user.save();
+        email.sendMail(user.email, user.name, true);
         const token = await user.generateAuthToken(user.email, user.password);
         res.status(201).send({ result, token });
     } catch (e) {
@@ -95,9 +99,7 @@ router.patch("/user", auth, async (req, res) => {
         const newObj = req.body;
         const allowedFields = ["age", "name", "email", "password"];
         const incomingFields = Object.keys(newObj);
-        const isValid = incomingFields.every(elt =>
-            allowedFields.includes(elt)
-        );
+        const isValid = incomingFields.every(elt => allowedFields.includes(elt));
         if (isValid) {
             let user = req.user;
             incomingFields.forEach(field => (user[field] = newObj[field]));
@@ -115,6 +117,7 @@ router.delete("/user", auth, async (req, res) => {
     try {
         const user = req.user;
         await user.remove();
+        email.sendMail(user.email, user.name, false);
         res.send(user);
     } catch (e) {
         return res.status(500).send(e);
