@@ -26,7 +26,9 @@ class Email {
                 await this.getTestAccount();
                 this.getTransporter();
             }
-            const text = welcome ? `Welcome to App ${name}` : `Hi ${name}, sorry for being a disappointment. GoodBye!`;
+            const text = welcome
+                ? `Welcome to App ${name}`
+                : `Hi ${name}, sorry for being a disappointment. GoodBye!`;
             const info = await this.transporter.sendMail({
                 from: '"Fred Foo 👻" <foo@example.com>', // sender address
                 to: email, // list of receivers
@@ -34,8 +36,9 @@ class Email {
                 text
                 // html: "<b>Hello world?</b>" // html body
             });
-            console.log("Message sent: %s", info.messageId);
-            console.log("Preview URL: %s", nodemailer.getTestMessageUrl(info));
+
+            // console.log("Message sent: %s", info.messageId);
+            // console.log("Preview URL: %s", nodemailer.getTestMessageUrl(info));
         } catch (e) {
             console.log("Error", e);
         }
